@@ -74,6 +74,7 @@ module CPU(
 	wire [13:0] resultadoEntrada;
 	wire saidaBotao;
 	wire Clock;
+	wire InvClock;
 	
 	//Saida Multiplexador Entrada
 	wire [31:0] EscolhidoMultiplexadorEntrada;
@@ -152,6 +153,7 @@ module CPU(
 		end
 	end
 
+	assign InvClock = ~Clock;
 	assign Led[13] = In;
 	assign LedVerde = Clock;
 	
@@ -172,7 +174,7 @@ module CPU(
 	
 	ULA alu (BR_Dado1, Escolhido_MultiplexadorALUSrc, Control_ALU, Saida_ULA, Zero, Instrucao[10:6]);
 	
-	MemoriaDados MD (BR_Dado2, Saida_ULA, Saida_ULA, MemWrite, ~Clock, Clock, DadoMemoriaRAM);
+	MemoriaDados MD (BR_Dado2, Saida_ULA, Saida_ULA, MemWrite, InvClock, Clock, DadoMemoriaRAM);
 	
 	MultiplexadorMemtoReg MMTR(DadoMemoriaRAM, Saida_ULA, MemtoReg, Escolhido_MultiplexadorMemtoReg);
 	
