@@ -1,0 +1,11 @@
+./db
+*.json
+*.qsf
+*.vwf
+*.rdb
+*.db_info
+*.flock
+*.qmsg
+*.qpf
+*.rpt
+*.qdf
