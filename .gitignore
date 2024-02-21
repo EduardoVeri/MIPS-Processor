@@ -1,4 +1,4 @@
-./db
+db/*
 *.json
 *.qsf
 *.vwf
@@ -9,3 +9,8 @@
 *.qpf
 *.rpt
 *.qdf
+output_files/*
+incremental_db/*
+
+# Don't ignore the following files
+!output_files/*.sof
