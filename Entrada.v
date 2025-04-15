@@ -29,7 +29,7 @@ module Entrada (
 		
 		// O valor de S apenas será alterado quando o valor de out atingir o valor de 50000000
 		if (Pause == 1) begin
-			if(out == 26'd6250000) begin
+			if(out == 26'd1562500) begin
 				out = 26'd0;
 				RegClock = ~RegClock;
 			end
