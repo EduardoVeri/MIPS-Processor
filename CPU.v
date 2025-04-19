@@ -80,7 +80,7 @@ module CPU(
 	wire [31:0] EscolhidoMultiplexadorEntrada;
 	
 	//Saida Multiplexador Saida
-	wire [31:0] EsolhidoMultiplexadorSaida;
+	wire [31:0] EscolhidoMultiplexadorSaida;
 	
 	//Saida Multiplexador JAL JALR para o BR
 	wire [4:0] EscolhidoMultiplexadorDestino;
@@ -157,7 +157,7 @@ module CPU(
 	assign Led[13] = In;
 	assign LedVerde = Clock;
 	
-	Saida exit (EsolhidoMultiplexadorSaida[12:0], Halt, Clock, Out, In,Led[12:0], Display1, 
+	Saida exit (EscolhidoMultiplexadorSaida[12:0], Halt, Clock, Out, In,Led[12:0], Display1, 
 		Display2, Display3, Display4, DisplayRef, Display6, Display_FP1, Display_FP2, 
 		EnderecoInstrucao, FP);
 	
@@ -196,7 +196,7 @@ module CPU(
 	
 	MultiplexadorEntrada ME (resultadoEntrada, Escolhido_MultiplexadorJAL, In, EscolhidoMultiplexadorEntrada);
 	
-	MultiplexadorSaida MS (resultadoEntrada, Saida_ULA, In, Out, EsolhidoMultiplexadorSaida);
+	MultiplexadorSaida MS (resultadoEntrada, Saida_ULA, In, Out, EscolhidoMultiplexadorSaida);
 	
 	MultiplexadorDestino MDJAL (EscolhidoMultiplexadorRegDst, JAL, JALR, EscolhidoMultiplexadorDestino);
 	
