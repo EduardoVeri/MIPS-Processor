@@ -16,22 +16,22 @@ module VGA(input wire clock,
     
     // Timing parameters (unchanged)
     parameter hsync_end = 10'd95,
-    hdat_begin = 10'd143,
-    hdat_end = 10'd783,
-    hpixel_end = 10'd799,
-    vsync_end = 10'd1,
-    vdat_begin = 10'd34,
-    vdat_end = 10'd514,
-    vline_end = 10'd524;
+        hdat_begin = 10'd143,
+        hdat_end = 10'd783,
+        hpixel_end = 10'd799,
+        vsync_end = 10'd1,
+        vdat_begin = 10'd34,
+        vdat_end = 10'd514,
+        vline_end = 10'd524;
     
     // Instantiate framebuffer
     framebuffer fb (
-    .clk(vga_clk),
-    .we(wr_en),
-    .write_addr(wr_addr),
-    .data(wr_data),
-    .read_addr(rd_addr),
-    .q(fb_data)
+        .clk(vga_clk),
+        .we(wr_en),
+        .write_addr(wr_addr),
+        .data(wr_data),
+        .read_addr(rd_addr),
+        .q(fb_data)
     );
     
     wire [9:0] scaled_hcount = (hcount - hdat_begin) / 2; // Get 0-319 range from 0-639 hcount
