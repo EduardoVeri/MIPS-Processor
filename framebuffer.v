@@ -21,7 +21,8 @@ module framebuffer
 	initial 
 	begin : INIT
         // $readmemb("vga_pattern_320x240.hex", ram);
-        $readmemb("vga_pattern.hex", ram);
+        // $readmemb("vga_pattern.hex", ram);
+        $readmemb("vga_pattern_pong.hex", ram);
 	end 
 
 	always @ (posedge clk)
