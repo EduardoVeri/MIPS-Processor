@@ -6,7 +6,11 @@ module CPU(
 	// output [6:0] Display1, Display2, Display3, Display4,
 	output [7:0] seg,
 	output [3:0] dig,
-	output [3:0] out_leds
+	output [3:0] out_leds,
+
+	output [2:0] disp_RGB,
+	output hsync,
+	output vsync
 //	output LedVerde,
 //	output LCD_ON,	// LCD Power ON/OFF
 //	output LCD_BLON,	// LCD Back Light ON/OFF
@@ -242,5 +246,16 @@ module CPU(
 		.Data1(BR_Dado1), .Data2(BR_Dado2));
 
 	interruption inter (.halt(Halt), .clk(Clock), .set(setClock), .pc(EnderecoInstrucao), .int_halt(int_halt), .int_clk(int_clk), .int_time(Instrucao[15:0]));
+	
+	VGA vga (
+		.clock(EntradaClock),
+		.wr_en(EnableDisp),
+		.wr_addr(EnderecoInstrucao),
+		.wr_data(resultadoEntrada[2:0]),
+		.disp_RGB(disp_RGB),
+		.hsync(hsync),
+		.vsync(vsync)
+	);
+
 
 endmodule 
