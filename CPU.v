@@ -2,19 +2,31 @@
 module CPU(
 	input EntradaClock,
 	//input ClockTeste,
-	input [13:0] Sw,
 	input Botao,
-	output [6:0] Display1, Display2, Display3, Display4, DisplayRef, Display6, Display_FP1, Display_FP2,
-	output [13:0] Led,
-	output LedVerde,
-	output LCD_ON,	// LCD Power ON/OFF
-	output LCD_BLON,	// LCD Back Light ON/OFF
-	output LCD_RW,	// LCD Read/Write Select, 0 = Write, 1 = Read
-	output LCD_EN,	// LCD Enable
-	output LCD_RS,
-	inout [7:0] LCD_DATA
+	// output [6:0] Display1, Display2, Display3, Display4,
+	output [7:0] seg,
+	output [3:0] dig,
+	output [3:0] out_leds
+//	output LedVerde,
+//	output LCD_ON,	// LCD Power ON/OFF
+//	output LCD_BLON,	// LCD Back Light ON/OFF
+//	output LCD_RW,	// LCD Read/Write Select, 0 = Write, 1 = Read
+//	output LCD_EN,	// LCD Enable
+//	output LCD_RS,
+//	inout [7:0] LCD_DATA
 );	
+	wire [13:0] Sw;
+	wire [13:0] Led;
+	wire DisplayRef, Display6, Display_FP1, Display_FP2;
+	wire LedVerde;
+	wire LCD_ON;	// LCD Power ON/OFF
+	wire LCD_BLON;	// LCD Back Light ON/OFF
+	wire LCD_RW;	// LCD Read/Write Select, 0 = Write, 1 = Read
+	wire LCD_EN;	// LCD Enable
+	wire LCD_RS;
+	wire [7:0] LCD_DATA;
 	
+	assign out_leds = {LedVerde, 3'b111};
 	/*
 		Aqui serão colocadas todas os fios de saída dos módulos,
 		para que sejam usados para interconectá-los
@@ -157,9 +169,27 @@ module CPU(
 	assign Led[13] = In;
 	assign LedVerde = Clock;
 	
-	Saida exit (EscolhidoMultiplexadorSaida[12:0], Halt, Clock, Out, In,Led[12:0], Display1, 
-		Display2, Display3, Display4, DisplayRef, Display6, Display_FP1, Display_FP2, 
-		EnderecoInstrucao, FP);
+	Saida exit (
+		.ValorSaida(EscolhidoMultiplexadorSaida[12:0]), 
+		// .ValorSaida(novoValorPC), 
+		.halt(Halt),
+		.ClockCPU(Clock), .EnableOut(Out),
+		.EnableIn(In),
+		.Led(Led[12:0]), 
+		.Display1(Display1), 
+		.Display2(Display2), 
+		.Display3(Display3), 
+		.Display4(Display4), 
+		.DisplayRef(DisplayRef), 
+		.Display6(Display6), 
+		.Display_FP1(Display_FP1), 
+		.Display_FP2(Display_FP2), 
+		.PC(EnderecoInstrucao), 
+		.FP(FP),
+		.seg(seg),
+		.dig(dig),
+		.clk(EntradaClock),
+	);
 	
 	Entrada enter (EntradaClock, Botao, Sw, resultadoEntrada, saidaBotao, Clock, EnableClock);
 	

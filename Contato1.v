@@ -1,7 +1,6 @@
 module Contato1	(
   input      [3:0] bcd,
-  output reg [6:0] seg,
-  input Clock
+  output reg [6:0] seg
 );
 
 integer contador = 1;
