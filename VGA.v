@@ -16,12 +16,12 @@ module VGA(input wire clock,
     
     // Timing parameters (unchanged)
     parameter hsync_end = 10'd95,
-    hdat_begin = 10'd239,
-    hdat_end = 10'd559,
+    hdat_begin = 10'd143,
+    hdat_end = 10'd783,
     hpixel_end = 10'd799,
     vsync_end = 10'd1,
-    vdat_begin = 10'd144,
-    vdat_end = 10'd384,
+    vdat_begin = 10'd34,
+    vdat_end = 10'd514,
     vline_end = 10'd524;
     
     // Instantiate framebuffer
@@ -34,8 +34,11 @@ module VGA(input wire clock,
     .q(fb_data)
     );
     
+    wire [9:0] scaled_hcount = (hcount - hdat_begin) / 2; // Get 0-319 range from 0-639 hcount
+    wire [9:0] scaled_vcount = (vcount - vdat_begin) / 2; // Get 0-239 range from 0-479 vcount
+    
     // Read address calculation
-    assign rd_addr = (vcount - vdat_begin) * 320 + (hcount - hdat_begin);
+    assign rd_addr = scaled_vcount * 320 + scaled_hcount;
     
     // Clock divider (25 MHz for 50 MHz input)
     always @(posedge clock) begin
@@ -63,8 +66,8 @@ module VGA(input wire clock,
     assign vcount_ov = (vcount == vline_end);
     
     // Sync signals and active region
-    assign dat_act = ((hcount > = hdat_begin) && (hcount < hdat_end))
-    && ((vcount > = vdat_begin) && (vcount < vdat_end));
+    assign dat_act = ((hcount >= hdat_begin) && (hcount < hdat_end))
+    && ((vcount >= vdat_begin) && (vcount < vdat_end));
     assign hsync  = (hcount > hsync_end);  // Verify polarity!
     assign vsync  = (vcount > vsync_end);  // Verify polarity!
     
