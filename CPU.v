@@ -208,6 +208,7 @@ module CPU(
 		.resultadoEntrada(resultadoEntrada), 
 		.saidaBotao(saidaBotao), 
 		.saidaClock(Clock), 
+
 	);
 	
 	UnidadeControle UC (Instrucao[31:26], Clock, saidaBotao, ALUOp, RegDst, MemRead, MemtoReg, MemWrite, 
