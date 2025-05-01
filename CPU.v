@@ -10,7 +10,10 @@ module CPU(
 
 	output [2:0] disp_RGB,
 	output hsync,
-	output vsync
+	output vsync,
+
+	input ps2_clk_in,
+	input ps2_data_in
 //	output LedVerde,
 //	output LCD_ON,	// LCD Power ON/OFF
 //	output LCD_BLON,	// LCD Back Light ON/OFF
@@ -195,7 +198,18 @@ module CPU(
 		.clk(EntradaClock),
 	);
 	
-	Entrada enter (EntradaClock, Botao, Sw, resultadoEntrada, saidaBotao, Clock, EnableClock);
+	Entrada enter (
+		EntradaClock,
+		Botao, 
+		Sw, 
+		resultadoEntrada, 
+		saidaBotao, 
+		Clock, 
+		EnableClock,
+		ps2_clk_in,
+		ps2_data_in
+		
+	);
 	
 	UnidadeControle UC (Instrucao[31:26], Clock, saidaBotao, ALUOp, RegDst, MemRead, MemtoReg, MemWrite, 
 		ALUSrc, RegWrite, PCFunct, BEQ, BNE, ControlJump, Halt, In, Out, EnableClock, JAL, EnableDisp, savePC, 

@@ -3,7 +3,10 @@ module Entrada (
 	input [13:0] Sw, 
 	output [13:0] resultadoEntrada,
 	output saidaBotao, saidaClock,
-	input Pause
+	input Pause,
+
+	input wire ps2_clk,
+	input wire ps2_data
 );
 	reg[25:0] out;
 	reg [12:0] resultado;
@@ -28,7 +31,7 @@ module Entrada (
 		end
 		
 		// O valor de S apenas será alterado quando o valor de out atingir o valor de 50000000
-		if (Pause == 1) begin
+		if (Pause == 1 || Pause == 0) begin
 			if(out == 26'd1562500) begin
 				out = 26'd0;
 				RegClock = ~RegClock;
@@ -48,13 +51,21 @@ module Entrada (
 		end
 	end
 
-	always @(*) begin
-		if (Sw[13] == 1)
-			resultado = {1'd0, Sw[12:0]};
-	end
-	
+//	always @(*) begin
+//		if (Sw[13] == 1)
+//			resultado = {1'd0, Sw[12:0]};
+//	end
+
+
+	PS2Key i_ps2Key (
+		.clk(Clock),
+		.PS2_clk(ps2_clk),
+		.PS2_DAT(ps2_data),
+		.data(resultadoEntrada)
+	);
+
 	assign saidaBotao = Debouncer[5];
 	assign saidaClock = RegClock;
-	assign resultadoEntrada = resultado;
+//	assign resultadoEntrada = resultado;
 	
 endmodule 
