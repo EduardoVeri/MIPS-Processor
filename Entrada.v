@@ -17,7 +17,7 @@ module Entrada (input Clock,
     
     always @(posedge Clock) begin
         
-        if ((Botao == 0) && (Debouncer[5] ! = 1))
+        if ((Botao == 0) && (Debouncer[5] != 1))
             Debouncer = Debouncer + 1;
         else if (Botao == 1)
             Debouncer = 6'd0;
