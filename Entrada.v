@@ -1,12 +1,13 @@
 module Entrada (
 	input Clock, Botao,
 	input [13:0] Sw, 
-	output [13:0] resultadoEntrada,
-	output saidaBotao, saidaClock,
+	input wire ps2_clk,
+	input wire ps2_data,
 	input Pause,
 
-	input wire ps2_clk,
-	input wire ps2_data
+	output [13:0] resultadoEntrada,
+	output saidaBotao, saidaClock
+
 );
 	reg[25:0] out;
 	reg [12:0] resultado;
