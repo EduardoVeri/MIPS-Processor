@@ -54,6 +54,7 @@ module PS2Key (
     input            PS2_DAT,  // Raw PS2 Data input
     output reg [7:0] data
 );  // Received scan code
+  reg [7:0] raw_scancode;  // Intermediate signal for raw scan code
 
   // --- Synchronization ---
   reg ps2_clk_sync1, ps2_clk_sync2;
@@ -87,13 +88,13 @@ module PS2Key (
   reg parity_bit;
   reg error_flag;  // Optional: Flag framing/parity errors
 
-  // --- Initialization ---
   initial begin
     state        = IDLE;
     bit_count    = 0;
     data_buffer  = 0;
     parity_bit   = 0;
-    data         = 0;
+    raw_scancode = 0;
+    // data         = 0;
     // data_valid = 0;
     error_flag   = 0;
     ps2_clk_prev = 1;  // Assume idle high
@@ -131,11 +132,10 @@ module PS2Key (
             error_flag <= 1;  // Indicate error
           end
         end
-
         CHECK_STOP: begin
           if (ps2_dat_synced == 1) begin  // Check for STOP bit (must be 1)
             // Successful reception
-            data <= data_buffer;  // Update output register
+            raw_scancode <= data_buffer;  // Update intermediate register
             // data_valid <= 1;         // Signal data is valid for one cycle
             // Optional: Add parity check here:
             // if ({parity_bit, data_buffer} % 2 ! = 1) error_flag < = 1; // Odd parity check
@@ -155,7 +155,11 @@ module PS2Key (
     end  // if (ps2_clk_falling_edge)
   end  // always @ (posedge clk)
 
-
+  scancode_decoder i_scancode_decoder (
+      .clk(clk),
+      .scan_code(raw_scancode),
+      .ascii_code(data)  // Output ASCII code to the module's output
+  );
 
 
 
