@@ -32,38 +32,57 @@ module scancode_decoder (
   always @(posedge clk) begin
     case (scan_code)
       KEY_0: begin
-        ascii_code <= 8'h30;
-      end  // ASCII '0'
+        ascii_code <= 8'h30;  // ASCII '0'
+      end
       KEY_1: begin
-        ascii_code <= 8'h31;
-      end  // ASCII '1'
+        ascii_code <= 8'h31;  // ASCII '1'
+      end
       KEY_2: begin
-        ascii_code <= 8'h32;
-      end  // ASCII '2'
+        ascii_code <= 8'h32;  // ASCII '2'
+      end
       KEY_3: begin
-        ascii_code <= 8'h33;
-      end  // ASCII '3'
+        ascii_code <= 8'h33;  // ASCII '3'
+      end
       KEY_4: begin
-        ascii_code <= 8'h34;
-      end  // ASCII '4'
+        ascii_code <= 8'h34;  // ASCII '4'
+      end
       KEY_5: begin
-        ascii_code <= 8'h35;
-      end  // ASCII '5'
+        ascii_code <= 8'h35;  // ASCII '5'
+      end
       KEY_6: begin
-        ascii_code <= 8'h36;
-      end  // ASCII '6'
+        ascii_code <= 8'h36;  // ASCII '6'
+      end
       KEY_7: begin
-        ascii_code <= 8'h37;
-      end  // ASCII '7'
+        ascii_code <= 8'h37;  // ASCII '7'
+      end
       KEY_8: begin
-        ascii_code <= 8'h38;
-      end  // ASCII '8'
+        ascii_code <= 8'h38;  // ASCII '8'
+      end
       KEY_9: begin
-        ascii_code <= 8'h39;
-      end  // ASCII '9'
+        ascii_code <= 8'h39;  // ASCII '9'
+      end
       KEY_ENTER: begin
-        ascii_code <= 8'h0D;
-      end  // ASCII CR (Carriage Return)
+        ascii_code <= 8'h0D;  // ASCII CR (Carriage Return)
+      end
+      KEY_A: begin
+        ascii_code <= 8'h41;  // ASCII 'A'
+      end
+      KEY_B: begin
+        ascii_code <= 8'h42;  // ASCII 'B'
+      end
+      KEY_C: begin
+        ascii_code <= 8'h43;  // ASCII 'C'
+      end
+      KEY_D: begin
+        ascii_code <= 8'h44;  // ASCII 'D'
+      end
+      KEY_E: begin
+        ascii_code <= 8'h45;  // ASCII 'E'
+      end
+      KEY_F: begin
+        ascii_code <= 8'h46;  // ASCII 'F'
+      end
+
       default: begin
         ascii_code <= scan_code;  // For debugging: output raw scan code
       end
