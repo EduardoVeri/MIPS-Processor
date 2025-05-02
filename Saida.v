@@ -40,7 +40,7 @@ module Saida (input [31:0] ValorSaida,
     
     reg [19:0] clk_240hz = 0;
     always @(posedge clk) begin
-        clk_240hz < = (clk_240hz == 20'd208333) ? 0 : clk_240hz + 1;
+        clk_240hz <= (clk_240hz == 20'd208333) ? 0 : clk_240hz + 1;
     end
     
     always @(posedge clk) begin

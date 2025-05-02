@@ -195,7 +195,7 @@ module CPU(
 		.FP(FP),
 		.seg(seg),
 		.dig(dig),
-		.clk(EntradaClock),
+		.clk(EntradaClock)
 	);
 	
 	Entrada enter (
@@ -203,12 +203,11 @@ module CPU(
 		.Botao(Botao), 
 		.Sw(Sw), 
 		.ps2_clk(ps2_clk_in),
-		.ps2_data(ps2_data_in)
+		.ps2_data(ps2_data_in),
 		.Pause(EnableClock),
 		.resultadoEntrada(resultadoEntrada), 
 		.saidaBotao(saidaBotao), 
-		.saidaClock(Clock), 
-
+		.saidaClock(Clock)
 	);
 	
 	UnidadeControle UC (Instrucao[31:26], Clock, saidaBotao, ALUOp, RegDst, MemRead, MemtoReg, MemWrite, 
