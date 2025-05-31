@@ -1,16 +1,18 @@
 module PS2Key (
-    input            clk,      // System clock
-    input            PS2_clk,  // Raw PS2 Clock input
-    input            PS2_DAT,  // Raw PS2 Data input
-    output reg [7:0] data
-);  // Received scan code
-  reg [7:0] raw_scancode;  // Intermediate signal for raw scan code
+    input            clk,        
+    input            PS2_clk,    
+    input            PS2_DAT,    
+    output reg [7:0] data,       
+    output reg       data_valid  
+);
+  reg  [7:0] raw_scancode;  
+  wire [7:0] decoded_ascii;  
 
-  // --- Synchronization ---
+  
   reg ps2_clk_sync1, ps2_clk_sync2;
   reg ps2_dat_sync1, ps2_dat_sync2;
-  wire ps2_clk_synced = ps2_clk_sync2;  // Use synchronized clock
-  wire ps2_dat_synced = ps2_dat_sync2;  // Use synchronized data
+  wire ps2_clk_synced = ps2_clk_sync2;  
+  wire ps2_dat_synced = ps2_dat_sync2;  
 
   always @(posedge clk) begin
     ps2_clk_sync1 <= PS2_clk;
@@ -19,7 +21,7 @@ module PS2Key (
     ps2_dat_sync2 <= ps2_dat_sync1;
   end
 
-  // Detect falling edge of synchronized PS2 clock
+  
   reg  ps2_clk_prev;
   wire ps2_clk_falling_edge;
   always @(posedge clk) begin
@@ -27,90 +29,119 @@ module PS2Key (
   end
   assign ps2_clk_falling_edge = ps2_clk_prev & ~ps2_clk_synced;
 
-  // --- State Machine ---
+  
   parameter IDLE = 0;
   parameter RECEIVING = 1;
-  parameter CHECK_STOP = 2;  // Added state for clarity
+  parameter CHECK_STOP = 2;
+  parameter DECODE_WAIT = 3;
 
   reg [1:0] state;
   reg [3:0] bit_count;
   reg [7:0] data_buffer;
-  reg parity_bit;
-  reg error_flag;  // Optional: Flag framing/parity errors
+  reg       parity_bit;
+  reg       error_flag;
+  reg       decode_pending;  
+
+  
+  reg [7:0] last_make_code;  
+  reg       break_code_expected;  
 
   initial begin
-    state        = IDLE;
-    bit_count    = 0;
-    data_buffer  = 0;
-    parity_bit   = 0;
-    raw_scancode = 0;
-    // data         = 0;
-    // data_valid = 0;
-    error_flag   = 0;
-    ps2_clk_prev = 1;  // Assume idle high
+    state               = IDLE;
+    bit_count           = 0;
+    data_buffer         = 0;
+    parity_bit          = 0;
+    raw_scancode        = 0;
+    data                = 0;  
+    data_valid          = 0;  
+    error_flag          = 0;
+    ps2_clk_prev        = 0;  
+    last_make_code      = 0;  
+    break_code_expected = 0;  
+    decode_pending      = 0;
   end
 
-  // --- Reception Logic (driven by system clock, triggered by edge detector) ---
+  
   always @(posedge clk) begin
-    // Default assignment for data_valid (ensure it's normally low)
-    // data_valid <= 0;
-    // error_flag <= 0; // Reset error flag if needed
+    data_valid <= 0;  
+
+    if (decode_pending) begin
+      data <= decoded_ascii;
+      data_valid <= 1'b1;
+      decode_pending <= 0;
+    end
 
     if (ps2_clk_falling_edge) begin
       case (state)
         IDLE: begin
-          if (ps2_dat_synced == 0) begin  // Check for START bit (must be 0)
+          if (ps2_dat_synced == 0) begin  
             state       <= RECEIVING;
             bit_count   <= 0;
-            data_buffer <= 0;  // Clear buffer
-            error_flag  <= 0;  // Clear error
+            data_buffer <= 0;
+            error_flag  <= 0;
           end
-          // else: Stay in IDLE, ignore falling edge if data isn't low (noise or bus idle)
         end
 
         RECEIVING: begin
-          if (bit_count < 8) begin  // Data bits 0-7 (LSB first)
-            data_buffer[bit_count] <= ps2_dat_synced;  // Store bit
+          if (bit_count < 8) begin  
+            data_buffer[bit_count] <= ps2_dat_synced;
             bit_count              <= bit_count + 1;
-          end else if (bit_count == 8) begin  // Parity bit
+          end else if (bit_count == 8) begin  
             parity_bit <= ps2_dat_synced;
             bit_count  <= bit_count + 1;
-            state      <= CHECK_STOP;  // Move to check stop bit on next edge
-          end  // Should not happen, but reset if count gets too high
-          else begin
+            state      <= CHECK_STOP;
+          end else begin  
             state      <= IDLE;
-            error_flag <= 1;  // Indicate error
+            error_flag <= 1;
           end
-        end
-        CHECK_STOP: begin
-          if (ps2_dat_synced == 1) begin  // Check for STOP bit (must be 1)
-            // Successful reception
-            raw_scancode <= data_buffer;  // Update intermediate register
-            // data_valid <= 1;         // Signal data is valid for one cycle
-            // Optional: Add parity check here:
-            // if ({parity_bit, data_buffer} % 2 ! = 1) error_flag < = 1; // Odd parity check
-          end else begin
-            // Framing error (Stop bit is not 1)
-            error_flag <= 1;  // Indicate error
-            // Do not assert data_valid or update data_out
-          end
-          state     <= IDLE;  // Go back to idle regardless of stop bit correctness
-          bit_count <= 0;  // Reset count
         end
 
-        default: begin  // Should not happen
+        CHECK_STOP: begin
+          if (ps2_dat_synced == 1) begin  
+            
+            raw_scancode <= data_buffer;  
+
+            if (break_code_expected) begin
+              
+              if (data_buffer == last_make_code) begin
+                last_make_code <= 8'h00;  
+              end
+
+              break_code_expected <= 1'b0;
+            end else if (data_buffer == 8'hF0) begin
+              
+              break_code_expected <= 1'b1;
+            end else if (data_buffer != last_make_code) begin
+              
+              last_make_code <= data_buffer;  
+              decode_pending <= 1;  
+              
+
+              
+            end
+          end else begin
+            
+            error_flag <= 1;
+          end
+
+          state     <= IDLE;  
+          bit_count <= 0;
+        end
+
+
+        default: begin
           state <= IDLE;
         end
-      endcase  // case (state)
-    end  // if (ps2_clk_falling_edge)
-  end  // always @ (posedge clk)
+      endcase
+    end  
 
+  end  
+
+  
   scancode_decoder i_scancode_decoder (
       .clk(clk),
-      .scan_code(raw_scancode),
-      .ascii_code(data)  // Output ASCII code to the module's output
+      .scan_code(raw_scancode),  
+      .ascii_code(decoded_ascii)  
   );
-
-
 
 endmodule
