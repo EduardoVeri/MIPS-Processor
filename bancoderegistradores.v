@@ -6,7 +6,7 @@ module BancodeRegistradores(Clock, Reg1, Reg2, RegEscrita, RegWrite,
 
 	input wire Clock, RegWrite;
 	input wire [4:0] Reg1, Reg2; 
-	input wire [5:0] RegEscrita;
+	input wire [4:0] RegEscrita;
 	input wire [31:0] EscreveDado;
 	output wire [31:0] Dado1, Dado2, DadoNoRegDeEscrita, FP;
 	
