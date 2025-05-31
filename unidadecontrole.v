@@ -1,5 +1,5 @@
 module UnidadeControle (
-    input [6:0] Opcode,
+    input [5:0] Opcode,
     input clock,
     Button,
     output [2:0] AluOp,
