@@ -514,6 +514,30 @@ module UnidadeControle (
 				REGsetClock <= 0;
 				REGgetInterruption <= 1;
 			end
+
+			6'b000111: begin // Get Keyboard 
+				REGRegWrite <= 1;
+				REGMemRead <= 0;
+				REGMemWrite <= 0;
+				REGMemtoReg <= 0;
+				REGALUSrc <= 0;
+				REGRegDst <= 1;
+				REGPCFunct <= 1;
+				REGAluOp <= 3'b000; // SOMA
+				REGBEQ <= 0;
+				REGBNE <= 0;
+				REGControlJump <= 0;
+				RegHalt <= 0;
+				RegIn <= 1; 
+				RegOut <= 0;
+				RegEnable <= 0;
+				REGJAL <= 0;
+				REGDisp <= 0;
+				REGsavePC <= 0;
+				REGsavePCBuffer <= 0;
+				REGsetClock <= 0;
+				REGgetInterruption <= 0;
+			end
 			
 			
 		endcase
