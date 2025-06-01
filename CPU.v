@@ -95,6 +95,7 @@ module CPU (
   wire saidaBotao;
   wire Clock;
   wire InvClock;
+  wire [7:0] resultadoKeyBoard;
 
   //Saida Multiplexador Entrada
   wire [31:0] EscolhidoMultiplexadorEntrada;
@@ -205,7 +206,9 @@ module CPU (
       .ps2_clk(ps2_clk_in),
       .ps2_data(ps2_data_in),
       .Pause(EnableClock),
+      .In(In),
       .resultadoEntrada(resultadoEntrada),
+      .resultadoKeyBoard(resultadoKeyBoard),
       .saidaBotao(saidaBotao),
       .saidaClock(Clock)
   );
@@ -344,7 +347,7 @@ module CPU (
   MultiplexadorEntrada ME (
       .DadoLido_Entrada(resultadoEntrada),
       .Dado_MemoriaULA(Escolhido_MultiplexadorJAL),
-      .KeyboardInput(),
+      .KeyboardInput(resultadoKeyBoard),
       .In(In),
       .Escolhido_MultiplexadorEntrada(EscolhidoMultiplexadorEntrada)
   );
