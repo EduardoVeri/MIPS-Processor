@@ -21,6 +21,8 @@ module Entrada (
   reg data_valid;
   integer contadorDebouncer = 1;
   integer contador = 0;
+  reg readytoclean_flag = 0;
+
 
   initial begin
     KeyBoardBuffer = 8'd0;
@@ -29,6 +31,7 @@ module Entrada (
     resultado = 14'd0;
     RegClock = 1'b0;
     Debouncer = 6'd0;
+    readytoclean_flag = 1'b0;
   end
 
   PS2Key i_ps2Key (
@@ -52,7 +55,8 @@ module Entrada (
 
     // O valor de S apenas será alterado quando o valor de out atingir o valor de 50000000
     if (Pause == 1 || Pause == 0) begin
-      if (out == 26'd1562500) begin
+      // if (out == 26'd1562500) begin // 32Hz
+      if (out == 26'd6250000) begin // 8Hz
         out      = 26'd0;
         RegClock = ~RegClock;
       end else out = out + 1;
@@ -70,16 +74,26 @@ module Entrada (
     if (Sw[13] == 1) resultado = {1'd0, Sw[12:0]};
   end
 
+
+  always @(negedge RegClock) begin
+    if (In == 2'd2) begin
+      resultadoKeyBoard <= KeyBoardBuffer;
+      readytoclean_flag = 1; // Marca que está pronto para limpar o buffer
+    end
+    else begin
+      readytoclean_flag = 0; // Reseta a flag se não estiver lendo do teclado
+      resultadoKeyBoard = 8'd0;
+    end
+  end
+
   always @(posedge Clock) begin
     if (data_valid == 1'b1) begin
-      KeyBoardBuffer <= ps2_keyboard_data;
+      KeyBoardBuffer = ps2_keyboard_data;
     end
 
-    if (In == 2'b10) begin
-      resultadoKeyBoard <= KeyBoardBuffer;
-      KeyBoardBuffer <= 8'd0;
-    end else begin
-      resultadoKeyBoard <= 8'd0;
+    if (readytoclean_flag == 1) begin
+      KeyBoardBuffer = 8'd0; // Limpa o buffer do teclado
+      // readytoclean_flag = 0; // Reseta a flag
     end
   end
 
