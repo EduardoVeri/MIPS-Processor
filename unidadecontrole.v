@@ -3,6 +3,7 @@ module UnidadeControle (
     input clock,
     Button,
     output [2:0] AluOp,
+    output [1:0] In,
     output RegDst,
     MemRead,
     MemtoReg,
@@ -14,7 +15,6 @@ module UnidadeControle (
     BNE,
     ControlJump,
     Halt,
-    In,
     Out,
     EnableClock,
     JAL,
@@ -22,8 +22,7 @@ module UnidadeControle (
     savePC,
     savePCBuffer,
     setClock,
-    getInterruption,
-    KeyboardInput
+    getInterruption
 );
 
   reg
@@ -38,21 +37,18 @@ module UnidadeControle (
       REGBNE,
       REGControlJump,
       RegHalt,
-      RegIn,
       RegOut,
       REGJAL,
       REGDisp,
       REGsavePC,
       REGsavePCBuffer,
       REGsetClock,
-      REGgetInterruption,
-      REGKeyboardInput;
+      REGgetInterruption;
+  reg [1:0] RegIn;
   reg [2:0] REGAluOp;
   reg RegEnable;
 
   always @(*) begin
-
-    REGKeyboardInput <= 0;
 
     case (Opcode)  // Tipo R
       6'b000000: begin
@@ -563,7 +559,7 @@ module UnidadeControle (
         REGBNE <= 0;
         REGControlJump <= 0;
         RegHalt <= 0;
-        RegIn <= 1;
+        RegIn <= 2;  // Keyboard Input
         RegOut <= 0;
         RegEnable <= 0;
         REGJAL <= 0;
@@ -572,10 +568,7 @@ module UnidadeControle (
         REGsavePCBuffer <= 0;
         REGsetClock <= 0;
         REGgetInterruption <= 0;
-        REGKeyboardInput <= 1;
       end
-
-
     endcase
   end
 
@@ -601,6 +594,5 @@ module UnidadeControle (
   assign savePCBuffer = REGsavePCBuffer;
   assign setClock = REGsetClock;
   assign getInterruption = REGgetInterruption;
-  assign KeyboardInput = REGKeyboardInput;
 
 endmodule
