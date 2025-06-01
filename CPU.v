@@ -43,9 +43,10 @@ module CPU (
 
   // Saida Unidade de Controle
   wire RegWrite, MemtoReg, MemRead, MemWrite, ALUSrc, 
-		RegDst, PCFunct, ControlJump, BEQ, BNE, Halt, In, 
+		RegDst, PCFunct, ControlJump, BEQ, BNE, Halt, 
 		Out, EnableClock, JAL, EnableDisp, savePC, JumpContextJump,
 		savePCBuffer, setClock, getInterruption;
+  wire [1:0] In;
   wire [2:0] ALUOp;
 
   //Saida Unidade de Controle da ULA
@@ -105,7 +106,7 @@ module CPU (
   wire [4:0] EscolhidoMultiplexadorDestino;
 
   //Saida Multiplexador JAL com o valor armazenado do PC 
-  wire [10:0] Escolhido_MultiplexadorJAL;
+  wire [31:0] Escolhido_MultiplexadorJAL;
 
   //Saida Multiplexador JReg e JALR, direcionando o valor do banco de Reg para o PC
   wire [10:0] Escolhido_MultiplexadorJumpReg;
@@ -233,8 +234,7 @@ module CPU (
       .savePC(savePC),
       .savePCBuffer(savePCBuffer),
       .setClock(setClock),
-      .getInterruption(getInterruption),
-      .KeyboardInput()
+      .getInterruption(getInterruption)
   );
 
   UnidadeControleULA UCA (
@@ -342,10 +342,11 @@ module CPU (
   );
 
   MultiplexadorEntrada ME (
-      resultadoEntrada,
-      Escolhido_MultiplexadorJAL,
-      In,
-      EscolhidoMultiplexadorEntrada
+      .DadoLido_Entrada(resultadoEntrada),
+      .Dado_MemoriaULA(Escolhido_MultiplexadorJAL),
+      .KeyboardInput(),
+      .In(In),
+      .Escolhido_MultiplexadorEntrada(EscolhidoMultiplexadorEntrada)
   );
 
   MultiplexadorSaida MS (
