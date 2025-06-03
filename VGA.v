@@ -15,7 +15,7 @@ module VGA (
     // PIXEL_SCALING_FACTOR = 4: Framebuffer is 160x120 (each FB pixel is 4x4 screen pixels)
     // PIXEL_SCALING_FACTOR = 8: Framebuffer is 80x60 (each FB pixel is 8x8 screen pixels)
     // Ensure BASE_FB_LOGICAL_WIDTH/HEIGHT are divisible by this factor.
-    parameter PIXEL_SCALING_FACTOR = 8;
+    parameter PIXEL_SCALING_FACTOR = 16;
 
     // Base logical framebuffer dimensions (before PIXEL_SCALING_FACTOR is applied)
     // This is now set to 640x480 as requested.
@@ -93,7 +93,7 @@ module VGA (
     reg [$clog2(ACTUAL_FB_WIDTH * ACTUAL_FB_HEIGHT)-1:0] pixel_addr_test_counter = 0;
 
     always @(posedge test_vga_clk) begin
-        reg_wr_en_internal <= 1'b1; // Enable write for this cycle (Corrected from 1'b0)
+        reg_wr_en_internal <= 1'b0; // Enable write for this cycle (Corrected from 1'b0)
         reg_wr_addr_internal <= pixel_addr_test_counter;
         reg_wr_data_internal <= pixel_colors_test;
 
