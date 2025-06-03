@@ -45,7 +45,7 @@ module CPU (
   wire RegWrite, MemtoReg, MemRead, MemWrite, ALUSrc, 
 		RegDst, PCFunct, ControlJump, BEQ, BNE, Halt, 
 		Out, EnableClock, JAL, EnableDisp, savePC, JumpContextJump,
-		savePCBuffer, setClock, getInterruption;
+		savePCBuffer, setClock, getInterruption, FrameBufferWrite;
   wire [1:0] In;
   wire [2:0] ALUOp;
 
@@ -237,7 +237,8 @@ module CPU (
       .savePC(savePC),
       .savePCBuffer(savePCBuffer),
       .setClock(setClock),
-      .getInterruption(getInterruption)
+      .getInterruption(getInterruption),
+      .FrameBufferWrite(FrameBufferWrite)
   );
 
   UnidadeControleULA UCA (
@@ -422,9 +423,9 @@ module CPU (
 
   VGA vga (
       .clock(EntradaClock),
-      .wr_en(EnableDisp),
-      .wr_addr(EnderecoInstrucao),
-      .wr_data(resultadoEntrada[2:0]),
+      .wr_en(FrameBufferWrite),
+      .wr_addr(Saida_ULA[16:0]), // Assuming Saida_ULA[16:0] is the address for framebuffer
+      .wr_data(BR_Dado2[2:0]), // We want to display the lower 3 bits of the ULA output
       .disp_RGB(disp_RGB),
       .hsync(hsync),
       .vsync(vsync)
