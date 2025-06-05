@@ -36,10 +36,11 @@ module framebuffer
 		integer aux;
 		aux = 0;
         for (i = 0; i < RAM_DEPTH; i = i + 1) begin
-			if (i % 40 == 0) // Example: Create a pattern every 40 pixels
-				aux = aux + 1; // White color for every 40th pixel
-			color = (i + aux) % 8; // Example: Cycle through colors 0-7
-			ram[i] = color[2:0]; // Assign a color value, e.g., cycling through 0-7
+			// if (i % 40 == 0) // Example: Create a pattern every 40 pixels
+			// 	aux = aux + 1; // White color for every 40th pixel
+			// color = (i + aux) % 8; // Example: Cycle through colors 0-7
+			// ram[i] = color[2:0]; // Assign a color value, e.g., cycling through 0-7
+            ram[i] = 3'h0; // Initialize all pixels to black (0,0,0)
         end
         $display("Framebuffer initialized: ADDR_WIDTH = %0d, RAM_DEPTH = %0d", ADDR_WIDTH, RAM_DEPTH);
         // $readmemb("vga_pattern_8.hex", ram); // This line would cause issues if RAM_DEPTH is smaller

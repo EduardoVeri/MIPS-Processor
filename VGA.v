@@ -107,14 +107,27 @@ module VGA (
     // ============= END Internal Test Pattern Generator ===================
 
 
+    // framebuffer #(
+    //     .DATA_WIDTH(3),
+    //     .ADDR_WIDTH(ACTUAL_FB_ADDR_WIDTH)
+    // ) fb_test (
+    //     .clk(vga_clk), // Use the VGA pixel clock for framebuffer operations
+    //     .we(reg_wr_en_internal), // Using internal test pattern's write enable
+    //     .write_addr(reg_wr_addr_internal), // Using internal test pattern's address
+    //     .data(reg_wr_data_internal),       // Using internal test pattern's data
+    //     .read_addr(rd_addr_internal),
+    //     .q(fb_data)
+    // );
+
+
     framebuffer #(
         .DATA_WIDTH(3),
         .ADDR_WIDTH(ACTUAL_FB_ADDR_WIDTH)
-    ) fb2 (
+    ) fb (
         .clk(vga_clk), // Use the VGA pixel clock for framebuffer operations
-        .we(reg_wr_en_internal), // Using internal test pattern's write enable
-        .write_addr(reg_wr_addr_internal), // Using internal test pattern's address
-        .data(reg_wr_data_internal),       // Using internal test pattern's data
+        .we(wr_en),
+        .write_addr(wr_addr), 
+        .data(wr_data),       
         .read_addr(rd_addr_internal),
         .q(fb_data)
     );
