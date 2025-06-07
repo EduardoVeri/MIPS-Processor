@@ -54,9 +54,16 @@ module Entrada (
     end
 
     // O valor de S apenas será alterado quando o valor de out atingir o valor de 50000000
-    if (Pause == 1 || Pause == 0) begin
+    if (Pause == 1) begin
       // if (out == 26'd1562500) begin // 32Hz
-      if (out == 26'd6250000) begin // 8Hz
+      // if (out == 26'd6250000) begin // 8Hz
+      // if (out == 26'd390625) begin // 128 Hz
+      // if (out == 26'd195312) begin // 256 Hz
+      // if (out == 26'd97656) begin // 512 Hz
+      // if (out == 26'd48828) begin // 1024 Hz
+      // if (out == 26'd24414) begin // 2048 Hz
+      // if (out == 26'd12207) begin // 4096 Hz
+      if (out == 26'd25) begin // 2 MHz
         out      = 26'd0;
         RegClock = ~RegClock;
       end else out = out + 1;
