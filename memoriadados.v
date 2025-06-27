@@ -1,6 +1,6 @@
 
 module MemoriaDados
-#(parameter DATA_WIDTH=32, parameter ADDR_WIDTH=12)
+#(parameter DATA_WIDTH=32, parameter ADDR_WIDTH=13)
 (
 	input [(DATA_WIDTH-1):0] data,
 	input [(ADDR_WIDTH-1):0] read_addr, write_addr,

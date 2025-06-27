@@ -3,7 +3,7 @@
 
 // Valor do parâmetro ADDR_WIDTH será ajustado confome necessário
 module ROM
-#(parameter DATA_WIDTH=32, parameter ADDR_WIDTH=11)
+#(parameter DATA_WIDTH=32, parameter ADDR_WIDTH=12)
 (
 	input [(ADDR_WIDTH-1):0] addr,
 	input clk, 
