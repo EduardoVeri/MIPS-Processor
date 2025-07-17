@@ -22,7 +22,8 @@ module UnidadeControle (
     savePC,
     savePCBuffer,
     setClock,
-    getInterruption
+    getInterruption,
+    output reg FrameBufferWrite
 );
 
   reg
@@ -49,6 +50,8 @@ module UnidadeControle (
   reg RegEnable;
 
   always @(*) begin
+    FrameBufferWrite <= 0; // Default value for framebuffer write
+
 
     case (Opcode)  // Tipo R
       6'b000000: begin
@@ -561,7 +564,7 @@ module UnidadeControle (
         RegHalt <= 0;
         RegIn <= 2;  // Keyboard Input
         RegOut <= 0;
-        RegEnable <= 0;
+        RegEnable <= 1;
         REGJAL <= 0;
         REGDisp <= 0;
         REGsavePC <= 0;
@@ -569,6 +572,32 @@ module UnidadeControle (
         REGsetClock <= 0;
         REGgetInterruption <= 0;
       end
+
+      6'b001111: begin // Pixel drawing
+        REGRegWrite <= 0;
+        REGMemRead <= 0;
+        REGMemWrite <= 0;
+        REGMemtoReg <= 1;  // Don't Care
+        REGALUSrc <= 1;
+        REGRegDst <= 1;
+        REGPCFunct <= 1;
+        REGAluOp <= 3'b000;  // SOMA
+        REGBEQ <= 0;
+        REGBNE <= 0;
+        REGControlJump <= 0;
+        RegHalt <= 0;
+        RegIn <= 0;
+        RegOut <= 0;
+        RegEnable <= 1;
+        REGJAL <= 0;
+        REGDisp <= 0;
+        REGsavePC <= 0;
+        REGsavePCBuffer <= 0;
+        REGsetClock <= 0;
+        REGgetInterruption <= 0;
+        FrameBufferWrite <= 1; // Enable framebuffer write
+      end
+
     endcase
   end
 
