@@ -27,23 +27,6 @@ module VGA (
     localparam ACTUAL_FB_HEIGHT = BASE_FB_LOGICAL_HEIGHT / PIXEL_SCALING_FACTOR;
     localparam ACTUAL_FB_ADDR_WIDTH = $clog2(ACTUAL_FB_WIDTH * ACTUAL_FB_HEIGHT);
 
-    // Sanity check for PIXEL_SCALING_FACTOR
-    initial begin
-        if (BASE_FB_LOGICAL_WIDTH % PIXEL_SCALING_FACTOR != 0 || BASE_FB_LOGICAL_HEIGHT % PIXEL_SCALING_FACTOR != 0) begin
-            $display("Error: PIXEL_SCALING_FACTOR (%0d) does not evenly divide base FB dimensions (%0dx%0d).",
-                     PIXEL_SCALING_FACTOR, BASE_FB_LOGICAL_WIDTH, BASE_FB_LOGICAL_HEIGHT);
-            $finish;
-        end
-        if (PIXEL_SCALING_FACTOR < 1) begin
-            $display("Error: PIXEL_SCALING_FACTOR must be 1 or greater.");
-            $finish;
-        end
-         $display("VGA Scaled Pixels: PIXEL_SCALING_FACTOR = %0d", PIXEL_SCALING_FACTOR);
-         $display("Base Framebuffer Dimensions for Scaling: %0d x %0d", BASE_FB_LOGICAL_WIDTH, BASE_FB_LOGICAL_HEIGHT);
-         $display("Actual Framebuffer Dimensions (after scaling): %0d x %0d", ACTUAL_FB_WIDTH, ACTUAL_FB_HEIGHT);
-         $display("Actual Framebuffer Address Width: %0d bits", ACTUAL_FB_ADDR_WIDTH);
-    end
-
     reg [9:0] hcount, vcount; // Horizontal and vertical screen counters (pixel clock rate)
     wire hcount_ov, vcount_ov, dat_act;
     reg vga_clk; // VGA pixel clock (e.g., 25 MHz)
@@ -62,62 +45,6 @@ module VGA (
               vdat_begin = 10'd34,
               vdat_end   = 10'd514,
               vline_end  = 10'd524;
-
-    // ============= Internal Test Pattern Generator ===================
-
-    reg test_vga_clk = 0; // Clock for test pattern generation
-    integer clk_div_test = 0;
-
-    always @(posedge clock) begin
-        if (clk_div_test == 50000) begin // Arbitrary slow clock for test writing
-            test_vga_clk <= ~test_vga_clk;
-            clk_div_test <= 0;
-        end else begin
-            clk_div_test <= clk_div_test + 1;
-        end
-    end
-
-    reg [ACTUAL_FB_ADDR_WIDTH-1:0] reg_wr_addr_internal; // Address for test write, sized for actual FB
-    reg [2:0] reg_wr_data_internal;
-    reg reg_wr_en_internal; 
-    reg [2:0] pixel_colors_test;
-
-    initial begin
-        reg_wr_en_internal = 0;
-        reg_wr_addr_internal = 0;
-        reg_wr_data_internal = 0;
-        pixel_colors_test = 3'h0;
-    end
-
-    // Counter for test pattern address, sized for the actual framebuffer
-    reg [$clog2(ACTUAL_FB_WIDTH * ACTUAL_FB_HEIGHT)-1:0] pixel_addr_test_counter = 0;
-
-    always @(posedge test_vga_clk) begin
-        reg_wr_en_internal <= 1'b0; // Enable write for this cycle (Corrected from 1'b0)
-        reg_wr_addr_internal <= pixel_addr_test_counter;
-        reg_wr_data_internal <= pixel_colors_test;
-
-        if (pixel_addr_test_counter == (ACTUAL_FB_WIDTH * ACTUAL_FB_HEIGHT - 1)) begin
-            pixel_addr_test_counter <= 0;
-            pixel_colors_test <= pixel_colors_test + 1; // Cycle color per full frame write
-        end else begin
-            pixel_addr_test_counter <= pixel_addr_test_counter + 1;
-        end
-    end
-    // ============= END Internal Test Pattern Generator ===================
-
-
-    // framebuffer #(
-    //     .DATA_WIDTH(3),
-    //     .ADDR_WIDTH(ACTUAL_FB_ADDR_WIDTH)
-    // ) fb_test (
-    //     .clk(vga_clk), // Use the VGA pixel clock for framebuffer operations
-    //     .we(reg_wr_en_internal), // Using internal test pattern's write enable
-    //     .write_addr(reg_wr_addr_internal), // Using internal test pattern's address
-    //     .data(reg_wr_data_internal),       // Using internal test pattern's data
-    //     .read_addr(rd_addr_internal),
-    //     .q(fb_data)
-    // );
 
 
     framebuffer #(
