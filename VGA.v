@@ -18,7 +18,6 @@ module VGA (
     parameter PIXEL_SCALING_FACTOR = 16;
 
     // Base logical framebuffer dimensions (before PIXEL_SCALING_FACTOR is applied)
-    // This is now set to 640x480 as requested.
     localparam BASE_FB_LOGICAL_WIDTH = 640;
     localparam BASE_FB_LOGICAL_HEIGHT = 480;
 
@@ -29,7 +28,7 @@ module VGA (
 
     reg [9:0] hcount, vcount; // Horizontal and vertical screen counters (pixel clock rate)
     wire hcount_ov, vcount_ov, dat_act;
-    reg vga_clk; // VGA pixel clock (e.g., 25 MHz)
+    reg vga_clk; // VGA pixel clock
 
     // Framebuffer signals
     wire [ACTUAL_FB_ADDR_WIDTH-1:0] rd_addr_internal; // Read address for the new smaller framebuffer
